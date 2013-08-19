@@ -27,15 +27,32 @@ else{
             if(verify_login_credentials($uname, $pass)){
                 echo "success";
             }
+            else{
+                echo "Wrong user-name or password.";
+            }
+            break;
         default         :
-            echo "undefined";
+            echo "undefined";break;
     }
 }
 
 function verify_login_credentials($uname, $pass){
-    if($uname=="hanut" && $pass="123")
-        return true;
-    else
-        return false;
+    $dbo = myPDO::get_dbcon();
+    $pstmt = $dbo->prepare("SELECT * FROM `mms_login` WHERE `UserName` = :uname");
+    $pstmt->bindValue(":uname", $uname);
+    $pstmt->setFetchMode(PDO::FETCH_ASSOC);
+    $pstmt->execute();
+    $result = $pstmt->fetch();
+    if($result){
+        if(rsa_keypair_check($uname, $pass, $result['PK'], $result['SK'])){
+            return TRUE;
+        }
+        else{
+            return FALSE;
+        }
+    }
+    else{
+        return FALSE;
+    }
 }
 ?>

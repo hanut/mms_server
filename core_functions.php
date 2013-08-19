@@ -1,4 +1,7 @@
 <?php
+if(empty($script)){   
+    exit();  
+}
 /**
  * This script contains function definitions for a variety of functions that are
  * addons for features such as security etc. For example the pk/sk generation 

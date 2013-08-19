@@ -8,7 +8,8 @@
  */
 $script = "data_server";
 
-require_once('myPDO.php');
+require_once 'myPDO.php';
+require_once 'core_functions.php';
 
 if(!isset($_POST['rtype'])){
     die("Invalid Request");

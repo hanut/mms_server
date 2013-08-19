@@ -44,7 +44,7 @@ function verify_login_credentials($uname, $pass){
     $pstmt->execute();
     $result = $pstmt->fetch();
     if($result){
-        if(rsa_keypair_check($uname, $pass, $result['PK'], $result['SK'])){
+        if(rsa_keypair_check($uname, $pass, $result['Private_Key'], $result['Secret_Key'])){
             return TRUE;
         }
         else{

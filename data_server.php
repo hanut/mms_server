@@ -55,4 +55,8 @@ function verify_login_credentials($uname, $pass){
         return FALSE;
     }
 }
+
+function get_user_details($uname){
+    
+}
 ?>

@@ -25,6 +25,8 @@ else{
             }
             $uname = $_POST['username'];
             $pass = $_POST['password'];
+            //Blank Fields validation
+            
             //Check the login credentials
             if(verify_login_credentials($uname, $pass)){
                 echo "success";
@@ -38,6 +40,19 @@ else{
     }
 }
 
+}
+catch(Exception $e){
+    echo "<pre>".$e->getTraceAsString()."</pre>";
+}
+
+/**
+ * Function for validating the login details based on a given username and 
+ * password.
+ * 
+ * @param type $uname
+ * @param type $pass
+ * @return boolean 
+ */
 function verify_login_credentials($uname, $pass){
     $dbo = myPDO::get_dbcon();
     $conditions['UserName'] = $uname;
@@ -58,10 +73,6 @@ function verify_login_credentials($uname, $pass){
     else{
         return FALSE;
     }
-}
-}
-catch(Exception $e){
-    echo "<pre>".$e->getTraceAsString()."</pre>";
 }
 
 function get_user_details($uname){

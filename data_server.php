@@ -54,8 +54,7 @@ catch(Exception $e){
  * @return boolean 
  */
 function verify_login_credentials($uname, $pass){
-    $dbo = myPDO::get_dbcon();
-    
+    $dbo = myPDO::get_dbcon(array("db"=>"mms_demo"));
     $conditions['UserName'] = $uname;
     $pstmt = $dbo->select_conditional('mms_login',$conditions);
 //    $pstmt->bindValue(":uname", $uname);

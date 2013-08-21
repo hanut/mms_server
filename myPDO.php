@@ -42,7 +42,7 @@ class myPDO extends PDO {
         try{
             parent::__construct( $dns, $this->user, $this->pass ); 
         }catch(PDOException $e){
-           echo $e->getMessage();
+            return false;
         }
         $this->return_type = $rtype;
     } 
@@ -154,22 +154,76 @@ class myPDO extends PDO {
      * Static  method to return an object of type myPDO. take a number of optional
      * parameters.
      * 
-     * @param string $engine
-     * @param string $host
-     * @param string $db
-     * @param string $user
-     * @param string $pass
-     * @param type $rtype
+     * @param Array $dbparams contains following keys (all of which are optional)
+     *      $dbparams['engine'] default is mysql
+     *      $dbparams['host']   default is 127.0.0.1
+     *      $dbparams['db']     default is mms_demo
+     *      $dbparams['user']   default is 'root' PLEASE MAKE SURE You change it
+     *      $dbparams['pass']   default is 127.0.0.1
+     *      $dbparams['rtype']  default is 127.0.0.1
+     * 
      * @return \myPDO 
      */
-    static function get_dbcon($engine='mysql', $host='127.0.0.1', $db='mms_demo', 
-                    $user='root', $pass='', $rtype = myPDO::ARRAY_ASSOC){
+    static function get_dbcon($dbparams = array()){
+        //Is Engine set ?
+        if(array_key_exists("engine", $dbparams)){
+            $engine= $dbparams['engine'];
+        }
+        else{
+            $engine='mysql';
+        }
         
+        //Is the host defined ?
+        if(array_key_exists("host", $dbparams)){
+            $host= $dbparams['host'];
+        }
+        else{
+            $host='127.0.0.1';
+        }
+        
+        //Is the database selected ?
+        if(array_key_exists("db", $dbparams)){
+            $db= $dbparams['db'];
+        }
+        else{
+            $db='mms_demo';
+        }
+        
+        //Is the user given ?
+        if(array_key_exists("user", $dbparams)){
+            $user= $dbparams['user'];
+        }
+        else{
+            $user='root';
+        }
+        
+        //Is the password given ?
+        if(array_key_exists("pass", $dbparams)){
+            $pass= $dbparams['pass'];
+        }
+        else{
+            $pass='';
+        }
+        
+        //Is the return type set ?
+        if(array_key_exists("rtype", $dbparams)){
+            $rtype= $dbparams['rtype'];
+        }
+        else{
+            $rtype = myPDO::ARRAY_ASSOC;
+        }
         //call parent constructor of class myPDO
-        return new myPDO($engine='mysql', $host='127.0.0.1', $db='mms_demo', 
-                    $user='root', $pass='', $rtype = myPDO::ARRAY_ASSOC);
+        $dbo =  new myPDO($engine, $host, $db,$user, $pass, $rtype);
+        if($dbo == false)
+            die("Database connection error. Contact server admin...");
+        else
+            return $dbo;
     }
 
-    
+    static function do_error_log($error_msg){
+        $msg = $error_msg." From user : ".$_SERVER['HTTP_USER_AGENT']
+                    ."[".$_SERVER['REMOTE_ADDR']."] @ ".$_SERVER['REQUEST_TIME'];
+        error_log($msg);
+    }
 } 
 ?>

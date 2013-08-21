@@ -117,24 +117,32 @@ class myPDO extends PDO {
         return $pstmt;
     }
     
-    public function execute(PDOStatement$pstmt,$get_result=false){
+    public function execute(PDOStatement $pstmt,$get_result=false){
         try{
-            $pstmt->execute();
+            $result = $pstmt->execute();
+            
+            //Check if result set is to be returned or not.
             if($get_result){
+                //if result set is being returned, set return value
+                //based on the number of rows.
+                //returns false if no rows are returned
                 if($pstmt->rowCount() > 1){
                     $result = $pstmt->fetchAll();
                     $result['count'] = count($result);
+                    return $result;
                 }
                 else if($pstmt->rowCount() == 1){
                     $result = $pstmt->fetch();
+                    return $result;
                 }
                 else{
                     return false;
                 }
-                return $result;
             }
             else{
-                return true;
+                //if no result set is to be returned simply return true or false
+                //status of the $pstmt->execute() command.
+                return $result;
             }
         }catch(PDOException $e){
             echo $e->getTraceAsString();
@@ -142,8 +150,26 @@ class myPDO extends PDO {
         }
     }
     
-    static function get_dbcon(){
-        return new myPDO();
+    /**
+     * Static  method to return an object of type myPDO. take a number of optional
+     * parameters.
+     * 
+     * @param string $engine
+     * @param string $host
+     * @param string $db
+     * @param string $user
+     * @param string $pass
+     * @param type $rtype
+     * @return \myPDO 
+     */
+    static function get_dbcon($engine='mysql', $host='127.0.0.1', $db='mms_demo', 
+                    $user='root', $pass='', $rtype = myPDO::ARRAY_ASSOC){
+        
+        //call parent constructor of class myPDO
+        return new myPDO($engine='mysql', $host='127.0.0.1', $db='mms_demo', 
+                    $user='root', $pass='', $rtype = myPDO::ARRAY_ASSOC);
     }
+
+    
 } 
 ?>

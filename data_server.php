@@ -55,12 +55,13 @@ catch(Exception $e){
  */
 function verify_login_credentials($uname, $pass){
     $dbo = myPDO::get_dbcon();
+    
     $conditions['UserName'] = $uname;
-    $pstmt = $dbo->select_conditional(`mms_login`,$conditions);
+    $pstmt = $dbo->select_conditional('mms_login',$conditions);
 //    $pstmt->bindValue(":uname", $uname);
 //    $pstmt->setFetchMode(PDO::FETCH_ASSOC);
 //    $pstmt->execute();
-    $result = $dbo->execute($pstmt);
+    $result = $dbo->execute($pstmt,true);
 //    $result = $pstmt->fetch();
     if($result){
         if(rsa_keypair_check($uname, $pass, $result['Private_Key'], $result['Secret_Key'])){

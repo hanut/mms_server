@@ -1,4 +1,9 @@
 <?php
+$script='test';
+
+include_once 'myPDO.php';
+include_once 'core_functions.php';
+
 try{
 ?>
 <html>
@@ -7,14 +12,29 @@ try{
     </head>    
     <body>
         <?php
-            $script = "test";
-            require_once 'myPDO.php';
-            
-            $dbo= myPDO::get_dbcon();
-            $pstmt = $dbo->select_conditional('mms_login',array("UserName"=>"aditya"),
-                                        array("UserID","UserName","UserType"));
+            $uname = "hanut";
+            $pass = "123";
+//            $result = rsa_keypair_generator($usr, $pass);
+            $dbo = myPDO::get_dbcon();
+            $conditions['UserName'] = $uname;
+            $pstmt = $dbo->select_conditional('mms_login',$conditions);
+//            $pstmt = $dbo->prepare("SELECT * FROM `mms_login` WHERE `UserName` = :uname");
+//            $pstmt->bindValue(":uname", $uname);
+//            $pstmt->setFetchMode(PDO::FETCH_ASSOC);
+//            $pstmt->execute();
             $result = $dbo->execute($pstmt,true);
-            xdebug_var_dump($result);
+            die(xdebug_var_dump($result));
+            if($result){
+                if(rsa_keypair_check($uname, $pass, $result['Private_Key'], $result['Secret_Key'])){
+                    echo "TRUE";
+                }
+                else{
+                    echo "FALSE";
+                }
+            }
+            else{
+                echo "FALSE";
+            }
         ?>
     </body>
 </html>

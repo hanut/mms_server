@@ -6,6 +6,8 @@
  * @author Hanut Singh, <hanut@koresoft.in>
  *  
  */
+try{
+
 $script = "data_server";
 
 require_once 'myPDO.php';
@@ -38,11 +40,13 @@ else{
 
 function verify_login_credentials($uname, $pass){
     $dbo = myPDO::get_dbcon();
-    $pstmt = $dbo->prepare("SELECT * FROM `mms_login` WHERE `UserName` = :uname");
-    $pstmt->bindValue(":uname", $uname);
-    $pstmt->setFetchMode(PDO::FETCH_ASSOC);
-    $pstmt->execute();
-    $result = $pstmt->fetch();
+    $conditions['UserName'] = $uname;
+    $pstmt = $dbo->select_conditional(`mms_login`,$conditions);
+//    $pstmt->bindValue(":uname", $uname);
+//    $pstmt->setFetchMode(PDO::FETCH_ASSOC);
+//    $pstmt->execute();
+    $result = $dbo->execute($pstmt);
+//    $result = $pstmt->fetch();
     if($result){
         if(rsa_keypair_check($uname, $pass, $result['Private_Key'], $result['Secret_Key'])){
             return TRUE;
@@ -54,6 +58,10 @@ function verify_login_credentials($uname, $pass){
     else{
         return FALSE;
     }
+}
+}
+catch(Exception $e){
+    echo "<pre>".$e->getTraceAsString()."</pre>";
 }
 
 function get_user_details($uname){

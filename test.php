@@ -1,3 +1,6 @@
+<?php
+try{
+?>
 <html>
     <head>
         <title>Test</title>
@@ -8,8 +11,16 @@
             require_once 'myPDO.php';
             
             $dbo= myPDO::get_dbcon();
-            $pstmt = $dbo->select_unconditional('mms_login',array("UserID","UserName","UserType"));
-            echo "<pre>".  xdebug_var_dump($pstmt)."</pre>";
+            $pstmt = $dbo->select_conditional('mms_login',array("UserName"=>"aditya"),
+                                        array("UserID","UserName","UserType"));
+            $result = $dbo->execute($pstmt,true);
+            xdebug_var_dump($result);
         ?>
     </body>
 </html>
+<?php
+}
+catch(Exception $e){
+    echo "<pre>".$e->getTraceAsString()."</pre>";
+}
+?>

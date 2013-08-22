@@ -36,16 +36,18 @@ else{
             }
             break;
         case "add_patient"  :
+            //Validate request POSTDATA for errors
             if(!isset($_POST['name']) || !isset($_POST['gender']) || !isset($_POST['address'])
                     || !isset($_POST['age']) || !isset($_POST['allergies'])){
                 die("Invalid Patient Data[ERR156]");
             }
-            $pname = $_POST['name'];
-            $gender = $_POST['gender']; 
-            $address = $_POST['address'];
-            $age = $_POST['age']; 
-            $allergies = $_POST['allergies'];
-            if(add_new_patient($pname,$gender,$address,$age,$allergies)){
+            $details = array();
+            $details['pname'] = $_POST['name'];
+            $details['gender'] = $_POST['gender']; 
+            $details['address'] = $_POST['address'];
+            $details['age'] = $_POST['age']; 
+            $details['allergies'] = $_POST['allergies'];
+            if(add_new_patient($details)){
                 echo "New Patient Added";
             }
             else{
@@ -92,17 +94,28 @@ function verify_login_credentials($uname, $pass){
     }
 }
 
-  function add_new_patient($pname,$gender,$address,$age,$allergies){
+/**
+ * Function for adding new users to the database
+ * Accepts an array of user details as input and adds to the database.
+ * 
+ * @param type $details['pname']
+ * @param type $details['gender']
+ * @param type $details['address']
+ * @param type $details['age']
+ * @param type $details['allergies']
+ * @return boolean 
+ */
+  function add_new_patient(array $details){
       try{
               $dbo = myPDO::get_dbcon();
               $pstmt = $dbo->prepare("INSERT INTO `mms_patients` "
                       ."(`Name`,`Age`,`Gender`,`Address`,`Allergies` )"
                       ."VALUES (:name, :age, :gender, :add, :alg)");
-              $pstmt->bindValue(":name", $pname);
-              $pstmt->bindValue(":age", $age);
-              $pstmt->bindValue(":gender", $gender);
-              $pstmt->bindValue(":add", $address);
-              $pstmt->bindValue(":alg", $allergies);
+              $pstmt->bindValue(":name", $details['pname']);
+              $pstmt->bindValue(":age", $details['age']);
+              $pstmt->bindValue(":gender", $details['gender']);
+              $pstmt->bindValue(":add", $details['address']);
+              $pstmt->bindValue(":alg", $details['allergies']);
 
               $chk = $pstmt->execute();
               if ($chk){
@@ -117,7 +130,7 @@ function verify_login_credentials($uname, $pass){
       }
   }
 
-function get_user_details($uname){
+function get_user_details($name, $value){
     
 }
 ?>

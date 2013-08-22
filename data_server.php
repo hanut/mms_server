@@ -35,6 +35,23 @@ else{
                 echo "Wrong user-name or password.";
             }
             break;
+        case "add_patient"  :
+            if(!isset($_POST['name']) || !isset($_POST['gender']) || !isset($_POST['address'])
+                    || !isset($_POST['age']) || !isset($_POST['allergies'])){
+                die("Invalid Patient Data[ERR156]");
+            }
+            $pname = $_POST['name'];
+            $gender = $_POST['gender']; 
+            $address = $_POST['address'];
+            $age = $_POST['age']; 
+            $allergies = $_POST['allergies'];
+            if(add_new_patient($pname,$gender,$address,$age,$allergies)){
+                echo "New Patient Added";
+            }
+            else{
+                echo "Error Adding New Patient.Contact server admin...";
+            }
+            break;
         default         :
             echo "undefined";break;
     }
@@ -74,6 +91,31 @@ function verify_login_credentials($uname, $pass){
         return FALSE;
     }
 }
+
+  function add_new_patient($pname,$gender,$address,$age,$allergies){
+      try{
+              $dbo = myPDO::get_dbcon();
+              $pstmt = $dbo->prepare("INSERT INTO `mms_patients` "
+                      ."(`Name`,`Age`,`Gender`,`Address`,`Allergies` )"
+                      ."VALUES (:name, :age, :gender, :add, :alg)");
+              $pstmt->bindValue(":name", $pname);
+              $pstmt->bindValue(":age", $age);
+              $pstmt->bindValue(":gender", $gender);
+              $pstmt->bindValue(":add", $address);
+              $pstmt->bindValue(":alg", $allergies);
+
+              $chk = $pstmt->execute();
+              if ($chk){
+                  return TRUE;
+              }
+              else{
+                  return FALSE;
+              }
+      }
+      catch(PDOException $e){
+          echo $e->getTraceAsString();
+      }
+  }
 
 function get_user_details($uname){
     

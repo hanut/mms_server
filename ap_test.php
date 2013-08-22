@@ -27,18 +27,30 @@
             <hr/>
             <form name='add_patient' method="post" action="data_server.php" style="margin-left: 35%;">
                 <label for="name">Patient's name</label>
-                <input type="text" name="name" id="name" placeholder="name"/>
+                <input type="text" value="hurrr" name="name" id="name" placeholder="name"/>
                 <br/>
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" placeholder="password"/>
+                <label for="age">Age</label>
+                <select name="age" id="age">
+                   <?php 
+                        for($i=0;$i<=120;$i++){
+                            echo "<option value=\"".$i."\">".$i."</option>";
+                        }
+                   ?>
+                </select>
                 <br/>
-                <label for="Address">Address</label>
-                <textarea name="Address" id="Address" placeholder="Address"/>
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
                 <br/>
-                <label for="password">Age</label>
-                <input type="password" name="password" id="password"/>
+                <label for="address">Address</label>
+                <textarea name="address" id="address" placeholder="Address">dasdasdsa</textarea>
                 <br/>
-                <input type="hidden" name="rtype" value="login"/>
+                <label for="allergies">Allergies</label>
+                <textarea name="allergies" id="allergies" placeholder="Allergies">sdadasdas</textarea>
+                <br/>
+                <input type="hidden" name="rtype" value="add_patient"/>
                 <button>Submit</button>
                 <br/>
             </form>

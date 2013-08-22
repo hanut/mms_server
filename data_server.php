@@ -29,7 +29,7 @@ else{
             
             //Check the login credentials
             if(verify_login_credentials($uname, $pass)){
-                echo "success";
+                echo "success;".$uname;
             }
             else{
                 echo "Wrong user-name or password.";

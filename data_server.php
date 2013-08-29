@@ -6,8 +6,6 @@
  * @author Hanut Singh, <hanut@koresoft.in>
  *  
  */
-try{
-
 $script = "data_server";
 
 require_once 'myPDO.php';
@@ -28,8 +26,10 @@ else{
             //Blank Fields validation
             
             //Check the login credentials
-            if(verify_login_credentials($uname, $pass)){
-                echo "success;".$uname;
+            $usertype = verify_login_credentials($uname, $pass);
+            if($usertype){
+                
+                echo "success;".$uname.";".$usertype;
             }
             else{
                 echo "Wrong user-name or password.";
@@ -59,11 +59,6 @@ else{
     }
 }
 
-}
-catch(Exception $e){
-    echo "<pre>".$e->getTraceAsString()."</pre>";
-}
-
 /**
  * Function for validating the login details based on a given username and 
  * password.
@@ -74,16 +69,20 @@ catch(Exception $e){
  */
 function verify_login_credentials($uname, $pass){
     $dbo = myPDO::get_dbcon(array("db"=>"mms_demo"));
-    $conditions['UserName'] = $uname;
-    $pstmt = $dbo->select_conditional('mms_login',$conditions);
-//    $pstmt->bindValue(":uname", $uname);
-//    $pstmt->setFetchMode(PDO::FETCH_ASSOC);
-//    $pstmt->execute();
-    $result = $dbo->execute($pstmt,true);
+    $pstmt = $dbo->prepare("SELECT  `UserName` ,  `Private_Key` ,  `Secret_Key` ,  "
+                            ."`TypeName` as type "
+                            ."FROM  `mms_login` ml "
+                            ."LEFT JOIN  `mms_user_types` mut "
+                            ."ON ml.`UserType` = mut.`TypeID` "
+                            ."WHERE ml.`UserName`=:uname");
+    $pstmt->bindValue(":uname", $uname);
+    $pstmt->setFetchMode(PDO::FETCH_ASSOC);
+    $pstmt->execute();
+    $result = $pstmt->fetch();
 //    $result = $pstmt->fetch();
     if($result){
         if(rsa_keypair_check($uname, $pass, $result['Private_Key'], $result['Secret_Key'])){
-            return TRUE;
+            return $result['type'];
         }
         else{
             return FALSE;
@@ -130,7 +129,54 @@ function verify_login_credentials($uname, $pass){
       }
   }
 
-function get_user_details($name, $value){
-    
+/**
+ * Takes an id for a given doctor and returns his/her details from the database
+ * 
+ * @param type $id ID of the doctor
+ * @return Mixed Returns array of doctors details on success or FALSE on failure. 
+ */
+function get_doctor_details($id){
+    try{
+              $dbo = myPDO::get_dbcon();
+              $pstmt = $dbo->prepare("SELECT * FROM `mms_doctors` "
+                      ."WHERE `DoctorID`=:id");
+              $pstmt->bindValue(":id", $id);
+              $result = $pstmt->fetch();
+              if ($result){
+                  return $result;
+              }
+              else{
+                  return FALSE;
+              }
+      }
+      catch(PDOException $e){
+          echo $e->getTraceAsString();
+      }
 }
+
+/**
+ * Takes an id for a given Chemis and returns his/her details from the database
+ * 
+ * @param type $id ID of the chemist
+ * @return Mixed Returns array of doctors details on success or FALSE on failure. 
+ */
+function get_pharmacist_details($id){
+    try{
+              $dbo = myPDO::get_dbcon();
+              $pstmt = $dbo->prepare("SELECT * FROM `mms_pharmacists` "
+                      ."WHERE `PharmacistID`=:id");
+              $pstmt->bindValue(":id", $id);
+              $result = $pstmt->fetch();
+              if ($result){
+                  return $result;
+              }
+              else{
+                  return FALSE;
+              }
+      }
+      catch(PDOException $e){
+          echo $e->getTraceAsString();
+      }
+}
+
 ?>

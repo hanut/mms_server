@@ -50,9 +50,9 @@ function rsa_keypair_check($usr, $pass, $private, $secret){
     }
 }
 
-function validate_blanks(array $fields){
-    for($i=0;$i<count($fields);$i++){
-        
-    }
-}
+//function validate_blanks(array $fields){
+//    for($i=0;$i<count($fields);$i++){
+//        
+//    }
+//}
 ?>
